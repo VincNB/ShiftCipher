@@ -20,8 +20,10 @@ public class Driver {
     private static final String ENCRYPT_ARG = "-e";
     private static final String DECRYPT_ARG = "-d";
     private static final String CRACK_ARG = "-c";
-    private final ShiftCipher cipher = new ShiftCipher();
+    private static final int OPERATE_ARG_COUNT = 4;
+    private static final int CRACK_ARG_COUNT = 2;
 
+    private final ShiftCipher cipher = new ShiftCipher();
     private final String[] args;
 
     public Driver(String[] args) {
@@ -48,7 +50,7 @@ public class Driver {
 
     private String operate() {
         StringBuilder result = new StringBuilder();
-        if (args.length == 4) {
+        if (args.length == OPERATE_ARG_COUNT) {
             String inputFile = args[1];
             String outputFile = args[3];
             if (setKey()) {
@@ -62,9 +64,9 @@ public class Driver {
                     lines = Collections.emptyList();
                 }
                 Queue<String> queue = new ArrayDeque<>(lines.size());
-                lines.forEach(line -> queue.offer(cipher.update(line))); //update file
+                lines.forEach(line -> queue.offer(cipher.update(line)));
 
-                if (!queue.isEmpty()) { //write file
+                if (!queue.isEmpty()) {
                     try (BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile))) {
                         while (!queue.isEmpty()) {
                             writer.write(queue.poll());
@@ -87,7 +89,7 @@ public class Driver {
 
     private String bruteForce() {
         StringBuilder result = new StringBuilder();
-        if (args.length == 2) {
+        if (args.length == CRACK_ARG_COUNT) {
             String inputFile = args[1];
             List<String> lines = Collections.emptyList();
             try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
