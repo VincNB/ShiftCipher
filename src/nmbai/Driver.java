@@ -108,7 +108,6 @@ public class Driver {
                 for (int i = 0; i < lines.size() && words.size() < softCap; i++) {
                     String[] split = lines.get(i).split(" ");
                     for (String s : split) {
-
                         String filtered = filter.filter(s);
                         if (filtered.length() >= dictionary.getMinWordLength() && filtered.length() <= dictionary.getMaxWordLength()) {
                             words.add(filtered);
@@ -116,24 +115,14 @@ public class Driver {
                     }
                 }
                 final int hitsNeeded = Math.max(1, words.size() / 2);
-                final int missesNeeded = Math.max(1, words.size() - hitsNeeded);
                 boolean cracked = false;
                 cipher.setShiftMode(ShiftCipher.ShiftMode.DECRYPT);
                 for (int key = 0; key < ShiftCipher.ALPHA_LEN && !cracked; key++) {
-                    int hitsLeft = hitsNeeded;
-                    int missesLeft = missesNeeded;
                     cipher.setKey(key);
-                    boolean keyDone = false;
-                    for (int i = 0; i < words.size() && !keyDone; i++) {
-                        String updated = cipher.update(words.get(i));
-                        if (dictionary.contains(updated)) {
-                            hitsLeft--;
-                            cracked = (hitsLeft == 0);
-                        } else {
-                            missesLeft--;
-                            keyDone = (missesLeft == 0);
-                        }
-                        keyDone |= cracked;
+                    //update each word with cipher(decrypt), check if found in dictionary, get total count
+                    int hits = (int) words.stream().map(cipher::update).filter(dictionary::contains).count();
+                    if (hits > hitsNeeded) {
+                        cracked = true;
                     }
                 }
                 if (cracked) {
@@ -144,7 +133,7 @@ public class Driver {
                 }
             }
         } else {
-            result.append("Expecting two arguments.");
+            result.append("Expecting two arguments for cracking file.");
         }
         return result.toString();
     }

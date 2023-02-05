@@ -1,9 +1,6 @@
 package nmbai.shiftcipher;
 
-import java.util.EnumMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Class used for encrypting Strings using the shift cipher algorithm where each letter in the String is substituted
@@ -15,12 +12,10 @@ public class ShiftCipher {
     public static final int ALPHA_LEN = 26;
     private static final int UPPERCASE_A = 'A';
     private static final int LOWERCASE_A = 'a';
-
     private final StringBuilder builder = new StringBuilder();
     private final Map<ShiftMode, Integer> keys = new EnumMap<>(ShiftMode.class);
     private ShiftMode shiftMode = ShiftMode.IDLE;
     private int key;
-
     public ShiftCipher() {
         this(0);
     }
@@ -79,6 +74,7 @@ public class ShiftCipher {
             }
             builder.append((char) ch);
         }
+
         return builder.toString();
     }
 
@@ -101,9 +97,6 @@ public class ShiftCipher {
         return String.format("ShiftCipher[mode=%s, key=%d]", this.shiftMode, this.key);
     }
 
-    /**
-     * ShiftMode determines how the ShiftCipher will operate. Valid modes are IDLE, ENCRYPT, DECRYPT
-     */
     public enum ShiftMode {
         IDLE(0),
         ENCRYPT(1),
